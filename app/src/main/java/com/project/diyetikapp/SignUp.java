@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.project.diyetikapp.Model.User;
+
 public class SignUp extends AppCompatActivity {
     MaterialEditText edtPhone, edtName,edtPassword;
     Button btnSignUp;
@@ -33,7 +35,7 @@ public class SignUp extends AppCompatActivity {
                 final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
                 mDialog.setMessage("Please waiting...");
                 mDialog.show();
-                table_user.addValueEventListener(new ValueEventListener() {
+               table_user.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //check if alredy user phone
