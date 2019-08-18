@@ -76,7 +76,7 @@
         android:layout_marginLeft="8dp"
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"
-        app:buttonColor="@color/btnSignUp"
+        app:fButtonColor="@color/btnSignUp"
         app:shadowColor="@android:color/black"
         app:shadowEnabled="true"
         app:shadowHeight="5dp"
