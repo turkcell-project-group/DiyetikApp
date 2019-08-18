@@ -1,6 +1,7 @@
 package com.project.diyetikapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -57,7 +58,9 @@ public class SignIn extends AppCompatActivity {
                             User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
                             if(user.getPassword().equals(edtPassword.getText().toString())){
                                 Toast.makeText(SignIn.this,"Sing in successfully!",Toast.LENGTH_SHORT).show();
-
+                                /* Giriş ekranı eklenince eklenecek!
+                                Intent main = new Intent(SignIn.this,MainActivity.class);
+                                startActivity(main);*/
                             } else {
                                 Toast.makeText(SignIn.this, "Sing in failed!", Toast.LENGTH_SHORT).show();
 
