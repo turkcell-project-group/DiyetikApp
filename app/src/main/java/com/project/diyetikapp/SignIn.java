@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Model.User;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -57,7 +58,11 @@ public class SignIn extends AppCompatActivity {
 
                             User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
                             if(user.getPassword().equals(edtPassword.getText().toString())){
-                                Toast.makeText(SignIn.this,"Sing in successfully!",Toast.LENGTH_SHORT).show();
+                                Intent homeIntent = new Intent(SignIn.this,Home.class);
+                                Common.currentUser= user;
+                                startActivity(homeIntent);
+                                finish();
+
                                 /* Giriş ekranı eklenince eklenecek!
                                 Intent main = new Intent(SignIn.this,MainActivity.class);
                                 startActivity(main);*/
