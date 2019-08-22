@@ -27,8 +27,8 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     @Override
-    public void onClick(View v) {
-        itemClickListener.onClick(itemView, getAdapterPosition(),false); //itemView yerine view yazmış ama bende neden olmadı? kontrol et
+    public void onClick(View view) {
+        itemClickListener.onClick(view, getAdapterPosition(),false); //itemView yerine view yazmış ama bende neden olmadı? kontrol et --> parametre olan view yazılmış
 
     }
 }
