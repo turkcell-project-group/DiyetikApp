@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.amulyakhare:com.amulyakhare.textdrawable:1.0.1@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2fd5bc60547b64723e4b4c9904079c1b/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2fd5bc60547b64723e4b4c9904079c1b/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58214fc8eaf87e6cdf394340c2dd9c32/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/58214fc8eaf87e6cdf394340c2dd9c32/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
