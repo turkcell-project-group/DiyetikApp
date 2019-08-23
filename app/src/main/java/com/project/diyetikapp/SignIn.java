@@ -51,12 +51,11 @@ public class SignIn extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //Check if user not exist in database
                         if(dataSnapshot.child(edtPhone.getText().toString()).exists()){
-
-
                             // Get user information
                             mDialog.dismiss();
 
                             User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
+                            user.setPhone(edtPhone.getText().toString()); // set phone
                             if(user.getPassword().equals(edtPassword.getText().toString())){
                                 Intent homeIntent = new Intent(SignIn.this,Home.class);
                                 Common.currentUser= user;
