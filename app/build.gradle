@@ -50,7 +50,5 @@ dependencies {
     implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
 
 
-
-
 }
 apply plugin: 'com.google.gms.google-services'

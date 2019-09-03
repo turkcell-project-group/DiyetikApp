@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Interface.ItemClickListener;
 import com.project.diyetikapp.Model.Category;
+import com.project.diyetikapp.Service.ListenOrder;
 import com.project.diyetikapp.ViewHolder.MenuViewHolder;
 import com.squareup.picasso.Picasso;
 
@@ -86,6 +87,10 @@ public class Home extends AppCompatActivity
         recycler_menu.setLayoutManager(layoutManager);
 
         loadMenu();
+
+        //Register service
+        Intent service= new Intent(Home.this, ListenOrder.class);
+        startService(service);
 
 
 
