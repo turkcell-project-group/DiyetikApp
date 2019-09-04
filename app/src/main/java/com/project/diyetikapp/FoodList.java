@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Interface.ItemClickListener;
 import com.project.diyetikapp.Model.Category;
 import com.project.diyetikapp.Model.Food;
@@ -64,7 +65,13 @@ public class FoodList extends AppCompatActivity {
         if (getIntent() != null)
             categoryId = getIntent().getStringExtra("CategoryId");
         if (!categoryId.isEmpty() && categoryId != null) {
-            loadListFood(categoryId);
+            if (Common.isConnectedToInterner(getBaseContext())) {
+                loadListFood(categoryId);
+            }
+            else{
+                Toast.makeText(FoodList.this,"Lütfen bağlantınızı kontrol ediniz!",Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
         //search
         materialSearchBar = (MaterialSearchBar)findViewById(R.id.searchBar);

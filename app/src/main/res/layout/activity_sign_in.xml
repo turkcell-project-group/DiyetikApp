@@ -47,6 +47,17 @@
             app:met_primaryColor="@android:color/white"
             app:met_singleLineEllipsis="true"/>
 
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/ckbRemember"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Material.Drawable.CheckBox"
+            android:text="Beni hatırla."
+            android:textColor="@android:color/white"
+            app:cbd_strokeColor="@android:color/white"
+            app:cbd_tickColor= "@color/colorPrimaryDark"/>
+
 
 
 

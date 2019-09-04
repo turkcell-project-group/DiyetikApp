@@ -41,7 +41,8 @@ dependencies {
 
     //implementation 'info.hoang8f:fbutton:1.0.5'
     implementation('com.github.jd-alexander:android-flat-button:v1.1')
-
+    implementation 'io.paperdb:paperdb:2.1'
+    implementation 'com.github.rey5137:material:1.2.4'
     implementation 'com.android.support:cardview-v7:26.+'
     implementation 'com.android.support:recyclerview-v7:26.+'
     implementation 'com.squareup.picasso:picasso:2.5.2'

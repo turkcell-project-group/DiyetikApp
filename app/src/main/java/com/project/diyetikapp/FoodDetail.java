@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Model.Food;
 import com.project.diyetikapp.Model.Order;
@@ -75,7 +76,13 @@ public class FoodDetail extends AppCompatActivity {
         if(getIntent()!= null)
             foodId=getIntent().getStringExtra("FoodId");
         if(!foodId.isEmpty()){
-            getDetailFood(foodId);
+            if (Common.isConnectedToInterner(getBaseContext())) {
+                getDetailFood(foodId);
+            }
+            else{
+                Toast.makeText(FoodDetail.this,"Lütfen bağlantınızı kontrol ediniz!",Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
     }
 

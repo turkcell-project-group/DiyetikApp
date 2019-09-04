@@ -28,6 +28,8 @@ import com.project.diyetikapp.Service.ListenOrder;
 import com.project.diyetikapp.ViewHolder.MenuViewHolder;
 import com.squareup.picasso.Picasso;
 
+import io.paperdb.Paper;
+
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -52,6 +54,7 @@ public class Home extends AppCompatActivity
         //Init Firebase
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
+        Paper.init(this);
 
 
 
@@ -86,7 +89,15 @@ public class Home extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         recycler_menu.setLayoutManager(layoutManager);
 
-        loadMenu();
+
+
+        if(Common.isConnectedToInterner(this)) {
+            loadMenu();
+        }
+        else{
+            Toast.makeText(this,"Lütfen bağlantınızı kontrol ediniz!",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         //Register service
         Intent service= new Intent(Home.this, ListenOrder.class);
@@ -141,6 +152,8 @@ public class Home extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        if(item.getItemId()== R.id.refresh)
+            loadMenu();
 
         return super.onOptionsItemSelected(item);
     }
@@ -162,6 +175,10 @@ public class Home extends AppCompatActivity
             startActivity(orderIntent);
 
         } else if (id == R.id.nav_log_out) {
+
+            //Delete remember user&password
+            Paper.book().destroy();
+
 
             Intent signIn = new Intent(Home.this,SignIn.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
