@@ -17,16 +17,35 @@
             android:background="@drawable/food_tava"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/food_name"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:background="#4f0e0d0e"
-            android:textColor="@color/white"
-            android:text="Name Of Food"
+        <LinearLayout
+            android:weightSum="10"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#4f0e0d0e"
+
+            >
+
+            <TextView
+                android:id="@+id/food_name"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="Name Of Food"
+                android:layout_weight="9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/fav"
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:layout_weight="1"
+                android:tint="@color/white"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
