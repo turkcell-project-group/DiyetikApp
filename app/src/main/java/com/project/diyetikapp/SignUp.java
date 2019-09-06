@@ -18,7 +18,7 @@ import com.project.diyetikapp.Model.User;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class SignUp extends AppCompatActivity {
-    MaterialEditText edtPhone, edtName,edtPassword;
+    MaterialEditText edtPhone, edtName,edtPassword,edtSecureCode;
     Button btnSignUp;
 
     @Override
@@ -30,6 +30,7 @@ public class SignUp extends AppCompatActivity {
         edtName = (MaterialEditText)findViewById(R.id.edtName);
         edtPassword = (MaterialEditText)findViewById(R.id.edtPassword);
         btnSignUp = (Button)findViewById(R.id.btnSignUp);
+        edtSecureCode = (MaterialEditText)findViewById(R.id.edtSecureCode);
 
 
         //Init firebase
@@ -53,7 +54,9 @@ public class SignUp extends AppCompatActivity {
                                 Toast.makeText(SignUp.this, "Phone number already register", Toast.LENGTH_SHORT).show();
                             } else {
                                 mDialog.dismiss();
-                                User user = new User(edtName.getText().toString(), edtPassword.getText().toString());
+                                User user = new User(edtName.getText().toString(),
+                                        edtPassword.getText().toString(),
+                                        edtSecureCode.getText().toString());
                                 table_user.child(edtPhone.getText().toString()).setValue(user);
                                 Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
                                 finish();

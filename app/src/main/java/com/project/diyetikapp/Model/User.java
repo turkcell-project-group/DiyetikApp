@@ -5,15 +5,27 @@ public class User{
     private String Password;
     private String Phone;
     private  String IsStaff;
+    private String secureCode;
 
     public User() {
     }
 
-    public User(String name, String password ) {
+    public User(String name, String password, String secureCode ) {
         Name = name;
         Password = password;
         IsStaff = "false";
+        this.secureCode= secureCode;
 
+    }
+    //press alt+insert
+
+
+    public String getSecureCode() {
+        return secureCode;
+    }
+
+    public void setSecureCode(String secureCode) {
+        this.secureCode = secureCode;
     }
 
     public String getIsStaff() {

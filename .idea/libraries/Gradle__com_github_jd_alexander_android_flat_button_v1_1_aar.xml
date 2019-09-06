@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.jd-alexander:android-flat-button:v1.1@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9826080f0dd8edc25761fb0bfa045bc2/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9826080f0dd8edc25761fb0bfa045bc2/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/09345e54ca2009fe9ace9ac282c72e8e/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/09345e54ca2009fe9ace9ac282c72e8e/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
