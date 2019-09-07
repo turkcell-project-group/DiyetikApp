@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,14 +22,16 @@ import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Model.Food;
 import com.project.diyetikapp.Model.Order;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.AppRatingDialog;
 
-public class FoodDetail extends AppCompatActivity {
+public class FoodDetail extends AppCompatActivity implements RatingDialogListener{
 
     TextView food_name,food_price, food_description;
     ImageView food_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    FloatingActionButton btnCart;
+    FloatingActionButton btnCart,btnRating;
     ElegantNumberButton numberButton;
+    RatingBar ratingBar;
 
     String foodId="";
     FirebaseDatabase database;
@@ -44,8 +47,18 @@ public class FoodDetail extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         foods = database.getReference("Food");
 
+            //Init View
         numberButton= (ElegantNumberButton)findViewById(R.id.number_button);
         btnCart=(FloatingActionButton)findViewById(R.id.btnCart);
+        btnRating =(FloatingActionButton)findViewById(R.id.btn_rating);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+
+        btnRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRatingDialog();
+            }
+        });
 
         btnCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +99,29 @@ public class FoodDetail extends AppCompatActivity {
         }
     }
 
+
+
+/////////sıkıntı varr tekrar kontrol et!!!!!!
+    private void showRatingDialog() {
+        new AppRatingDialog.Builder()
+                .setPositiveButtonText("Submit")
+                .setNegativeButtonText("Cancel")
+                .setNoteDiscription(Arrays.asList("Very Bad", "Not Good", "Quite Ok","Very Good", "Excellent"))
+                .setDefaultRating(0)
+                .setTitle("Rate this food")
+                .setDescription("Please select some stars and give your feedback")
+                .setTitleTextColor(R.color.colorPrimary)
+                .setDescriptionTextColor(R.color.colorPrimary)
+                .setHint("Please write your comment here...!")
+                .setHintTextColor(R.color.colorAccent)
+                .setCommentTextColor(android.R.color.white)
+                .setCommentBackgroundColor(R.color.colorPrimaryDark)
+                .setWindowAnimation(R.style.RatingDialogFadeAnim)
+                .create(FoodDetail.this)
+                .show();
+
+    }
+
     private void getDetailFood(String foodId) {
         foods.child(foodId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -107,3 +143,8 @@ public class FoodDetail extends AppCompatActivity {
         });
     }
 }
+
+
+
+
+

@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:1.2.0'
 
     implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
+    implementation 'com.stepstone.apprating:app-rating:2.0.0'
 
 
 }
