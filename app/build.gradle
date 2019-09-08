@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:10.2.0'
     implementation 'com.google.firebase:firebase-database:10.2.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'com.google.firebase:firebase-messaging:10.2.0'
 
     //implementation 'info.hoang8f:fbutton:1.0.5'
     implementation('com.github.jd-alexander:android-flat-button:v1.1')
@@ -50,7 +51,11 @@ dependencies {
 
     implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
     implementation 'com.stepstone.apprating:app-rating:2.0.0'
-
+//Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation "com.squareup.okhttp3:okhttp:4.0.0-RC1"
 
 }
 apply plugin: 'com.google.gms.google-services'

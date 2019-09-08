@@ -3,7 +3,6 @@ package com.project.diyetikapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -21,10 +20,11 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Interface.ItemClickListener;
 import com.project.diyetikapp.Model.Category;
-import com.project.diyetikapp.Service.ListenOrder;
+import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.ViewHolder.MenuViewHolder;
 import com.squareup.picasso.Picasso;
 
@@ -39,7 +39,7 @@ public class Home extends AppCompatActivity
     RecyclerView recycler_menu;
     RecyclerView.LayoutManager layoutManager;
 
-    FirebaseRecyclerAdapter<Category,MenuViewHolder> adapter;
+    FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +57,12 @@ public class Home extends AppCompatActivity
         Paper.init(this);
 
 
-
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              Intent cartIntent= new Intent(Home.this,Cart.class);
-              startActivity(cartIntent);
+                Intent cartIntent = new Intent(Home.this, Cart.class);
+                startActivity(cartIntent);
             }
         });
 
@@ -79,48 +76,51 @@ public class Home extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //set name for user
-        View headerView =navigationView.getHeaderView(0);
-        txtFullName = (TextView)headerView.findViewById(R.id.txtFullName);
+        View headerView = navigationView.getHeaderView(0);
+        txtFullName = (TextView) headerView.findViewById(R.id.txtFullName);
         txtFullName.setText(Common.currentUser.getName());
 
         //Load menu
-        recycler_menu = (RecyclerView)findViewById(R.id.recycler_menu);
+        recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
         recycler_menu.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recycler_menu.setLayoutManager(layoutManager);
 
 
-
-        if(Common.isConnectedToInterner(this)) {
+        if (Common.isConnectedToInterner(this)) {
             loadMenu();
-        }
-        else{
-            Toast.makeText(this,"Lütfen bağlantınızı kontrol ediniz!",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Lütfen bağlantınızı kontrol ediniz!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         //Register service
-        Intent service= new Intent(Home.this, ListenOrder.class);
-        startService(service);
-
+        updateToken(FirebaseInstanceId.getInstance().getToken());
 
 
     }
 
+    private void updateToken(String token) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference tokens = db.getReference("Tokens");
+        Token data = new Token(token,false);
+        tokens.child(Common.currentUser.getPhone()).setValue(data);
+    }
+
     private void loadMenu() {
-        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category.class,R.layout.menu_item,MenuViewHolder.class,category) {
+        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category.class, R.layout.menu_item, MenuViewHolder.class, category) {
             @Override
             protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
-            viewHolder.txtMenuName.setText(model.getName());
+                viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).
                         into(viewHolder.imageView);
                 final Category clickItem = model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                       // Toast.makeText(Home.this,""+clickItem.getName(),Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(Home.this,""+clickItem.getName(),Toast.LENGTH_SHORT).show();
                         // Get categoryId and send to new Activity
-                        Intent foodList = new Intent(Home.this,FoodList.class);
+                        Intent foodList = new Intent(Home.this, FoodList.class);
                         // Because category ıd is key ,so we just get key of this item
                         foodList.putExtra("CategoryId", adapter.getRef(position).getKey());
                         startActivity(foodList);
@@ -152,7 +152,7 @@ public class Home extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId()== R.id.refresh)
+        if (item.getItemId() == R.id.refresh)
             loadMenu();
 
         return super.onOptionsItemSelected(item);
@@ -167,11 +167,11 @@ public class Home extends AppCompatActivity
         if (id == R.id.nav_menu) {
             // Handle the camera action
         } else if (id == R.id.nav_cart) {
-            Intent cartIntent = new Intent(Home.this,Cart.class);
+            Intent cartIntent = new Intent(Home.this, Cart.class);
             startActivity(cartIntent);
 
         } else if (id == R.id.nav_orders) {
-            Intent orderIntent = new Intent(Home.this,OrderStatus.class);
+            Intent orderIntent = new Intent(Home.this, OrderStatus.class);
             startActivity(orderIntent);
 
         } else if (id == R.id.nav_log_out) {
@@ -180,8 +180,8 @@ public class Home extends AppCompatActivity
             Paper.book().destroy();
 
 
-            Intent signIn = new Intent(Home.this,SignIn.class);
-            signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Intent signIn = new Intent(Home.this, SignIn.class);
+            signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(signIn);
 
 
