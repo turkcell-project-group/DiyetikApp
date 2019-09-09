@@ -1,0 +1,93 @@
+{
+  "project_info": {
+    "project_number": "283041708397",
+    "firebase_url": "https://diyetsepeti-89551.firebaseio.com",
+    "project_id": "diyetsepeti-89551",
+    "storage_bucket": "diyetsepeti-89551.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283041708397:android:36c789d55a3a7389",
+        "android_client_info": {
+          "package_name": "com.example.diyetsepeti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283041708397-ok5dvn49r03d8v9ajmpr6mdo4d3dm3n8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diyetsepeti",
+            "certificate_hash": "57505c8c4520ff196395641cbfb9e8302b3d120e"
+          }
+        },
+        {
+          "client_id": "283041708397-5pukk8dcq516tt2h0nuug474apqf7bss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADXEXI4ab2xptw0QerfJ7Bpzs1g9A9wek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283041708397-5pukk8dcq516tt2h0nuug474apqf7bss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283041708397:android:db05c1741651b2d0",
+        "android_client_info": {
+          "package_name": "com.project.diyetikapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283041708397-khgf282v9cagfqjc75h9ehfjirgqqcq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.diyetikapp",
+            "certificate_hash": "57505c8c4520ff196395641cbfb9e8302b3d120e"
+          }
+        },
+        {
+          "client_id": "283041708397-3t7lit40hstoi47r09gq2qp1asic2n06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.diyetikapp",
+            "certificate_hash": "8b8da7c78685d755a6f46ebf3ebe4f7433df8f0a"
+          }
+        },
+        {
+          "client_id": "283041708397-5pukk8dcq516tt2h0nuug474apqf7bss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADXEXI4ab2xptw0QerfJ7Bpzs1g9A9wek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283041708397-5pukk8dcq516tt2h0nuug474apqf7bss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

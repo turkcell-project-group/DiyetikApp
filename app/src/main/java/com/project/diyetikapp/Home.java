@@ -39,6 +39,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
 
 public class Home extends AppCompatActivity
@@ -227,7 +228,7 @@ public class Home extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 //change password here
 
-                android.app.AlertDialog waitingDialog = new SpotsDialog(Home.this);
+                final android.app.AlertDialog waitingDialog = new SpotsDialog(Home.this);
                 waitingDialog.show();
 
                 //check old password
