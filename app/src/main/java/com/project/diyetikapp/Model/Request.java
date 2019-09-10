@@ -24,7 +24,7 @@ public class Request {
         this.comment = comment;
     }
 
-    public String getComment() { C
+    public String getComment() {
         return comment;
     }
 

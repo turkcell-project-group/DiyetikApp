@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"></meta-data>
+
         <activity android:name=".OrderStatus" />
         <activity android:name=".Cart" />
         <activity android:name=".FoodDetail" />
@@ -19,6 +22,11 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+        
+        <provider
+            android:authorities="com.facebook.app.FacebookContentProviderfb442974716304210"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"></provider>
 
         <service android:name=".Service.MyFirebaseMessaging">
             <intent-filter>
