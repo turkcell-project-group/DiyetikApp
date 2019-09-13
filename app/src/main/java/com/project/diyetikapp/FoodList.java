@@ -37,6 +37,7 @@ import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Interface.ItemClickListener;
 import com.project.diyetikapp.Model.Category;
 import com.project.diyetikapp.Model.Food;
+import com.project.diyetikapp.Model.Order;
 import com.project.diyetikapp.ViewHolder.FoodViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -306,6 +307,21 @@ public class FoodList extends AppCompatActivity {
                 if (localDB.isFavorite(adapter.getRef(position).getKey()))
                     viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
 
+                //Quick cart
+                viewHolder.quick_cart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Database(getBaseContext()).addToCart(new Order(
+                                adapter.getRef(position).getKey(),
+                                model.getName(),
+                                "1",
+                                model.getPrice(),
+                                model.getDiscount()
+                        ));
+                        Toast.makeText(FoodList.this,"Added to cart",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 //click to share
                 viewHolder.share_image.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -360,6 +376,13 @@ public class FoodList extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(adapter!= null)
+            adapter.startListening();
     }
 
     @Override

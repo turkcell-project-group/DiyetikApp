@@ -38,12 +38,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-core:11.6.2'
     implementation 'com.google.firebase:firebase-database:11.6.2'
-    implementation 'com.google.firebase:firebase-messaging:11.6.2'
+    implementation 'com.google.firebase:firebase-messaging:17.6.0'
+    implementation 'com.google.android.gms:play-services-places:11.6.2'
     //implementation 'com.google.firebase:firebase-messaging:11.2.0'
     //implementation 'com.google.firebase:firebase-messaging:17.6.0'
 
 
-    implementation ('com.facebook.android:facebook-share:[4,5)')
+    implementation 'com.github.andremion:counterfab:1.0.1'
+    implementation('com.facebook.android:facebook-share:[4,5)')
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
 
     //implementation 'info.hoang8f:fbutton:1.0.5'

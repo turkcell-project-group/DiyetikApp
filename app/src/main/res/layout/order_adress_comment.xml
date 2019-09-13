@@ -28,11 +28,17 @@
             app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true" />
 
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></fragment>
+
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edtComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Vomment"
+            android:hint="Comment"
             android:inputType="textMultiLine"
             android:text=""
             android:textColor="@color/colorPrimary"

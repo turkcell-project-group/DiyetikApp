@@ -10,18 +10,29 @@ public class Request {
     private String status;
     private List<Order> foods; //list of food order
     private String comment;
+    private String latLng;
+    // private String paymentState;
 
     public Request() {
     }
 
-    public Request(String phone, String name, String address, String total, List<Order> foods,String comment) {
+    public Request(String phone, String name, String address, String total, String status, List<Order> foods, String comment, String latLng) {
         this.phone = phone;
         this.name = name;
         this.address = address;
         this.total = total;
+        this.status = status;
         this.foods = foods;
-        this.status="0"; //default is 0, 0:placed, 1:shipping,2 :shipped
         this.comment = comment;
+        this.latLng = latLng;
+    }
+
+    public String getLatLng() {
+        return latLng;
+    }
+
+    public void setLatLng(String latLng) {
+        this.latLng = latLng;
     }
 
     public String getComment() {

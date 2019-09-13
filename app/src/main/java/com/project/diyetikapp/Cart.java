@@ -17,6 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -56,13 +60,15 @@ public class Cart extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference requests;
 
-    TextView txtTotalPrice;
+    public TextView txtTotalPrice;
     FButton btnPlace;
 
     List<Order> cart = new ArrayList<>();
 
     CartAdapter adapter;
     APIService mService;
+
+    Place shippingAddress;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -78,6 +84,7 @@ public class Cart extends AppCompatActivity {
         .setFontAttrId(R.attr.fontPath)
         .build());
         setContentView(R.layout.activity_cart);
+
 
 
         //Init Service
@@ -118,7 +125,27 @@ public class Cart extends AppCompatActivity {
 
         LayoutInflater inflater = this.getLayoutInflater();
         View order_adress_comment = inflater.inflate(R.layout.order_adress_comment, null);
-        final MaterialEditText edtAdress = order_adress_comment.findViewById(R.id.edtAdress);
+
+        PlaceAutocompleteFragment edtAdress=(PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        edtAdress.getView().findViewById(R.id.place_autocomplete_search_button).setVisibility(View.GONE);
+        ((EditText)edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).setHint("Adresinizi giriniz");
+        ((EditText)edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14);
+
+        edtAdress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+                shippingAddress=place;
+            }
+
+            @Override
+            public void onError(Status status) {
+
+                Log.e("ERROR",status.getStatusMessage());
+            }
+        });
+
+       // final MaterialEditText edtAdress = order_adress_comment.findViewById(R.id.edtAdress);
         final MaterialEditText edtComment = order_adress_comment.findViewById(R.id.edtComment);
         alertDialog.setView(order_adress_comment);
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
@@ -130,9 +157,12 @@ public class Cart extends AppCompatActivity {
                 Request request = new Request(
                         Common.currentUser.getPhone(),
                         Common.currentUser.getName(),
-                        edtAdress.getText().toString(),
+                        shippingAddress.getAddress().toString(),
                         txtTotalPrice.getText().toString(),
-                        cart, edtComment.getText().toString()
+                        "1",
+                        cart,
+                        String.format("%s,%s",shippingAddress.getLatLng().latitude,shippingAddress),
+                        edtComment.getText().toString()
                 );
                 // submit to firebase
                 // we will using System.Currentmilli to key
@@ -144,12 +174,16 @@ public class Cart extends AppCompatActivity {
                 sendNotificationOrder(order_number);
                 /*Toast.makeText(Cart.this, "Thank you , Order Place", Toast.LENGTH_SHORT).show();
                 finish();*/
+                getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment))
+                        .commit();
             }
         });
         alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment))
+                        .commit();
             }
         });
         alertDialog.show();

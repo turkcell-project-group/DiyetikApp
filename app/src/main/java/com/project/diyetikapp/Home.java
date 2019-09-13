@@ -27,6 +27,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andremion.counterfab.CounterFab;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.project.diyetikapp.Common.Common;
+import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Interface.ItemClickListener;
 import com.project.diyetikapp.Model.Category;
 import com.project.diyetikapp.Model.Token;
@@ -62,6 +64,7 @@ public class Home extends AppCompatActivity
 
     FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
     SwipeRefreshLayout swipeRefreshLayout;
+    CounterFab fab;
 
 
     @Override
@@ -117,6 +120,8 @@ public class Home extends AppCompatActivity
 
 
 
+
+
         //Init Firebase
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
@@ -160,7 +165,7 @@ public class Home extends AppCompatActivity
         Paper.init(this);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (CounterFab) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,6 +173,7 @@ public class Home extends AppCompatActivity
                 startActivity(cartIntent);
             }
         });
+        fab.setCount(new Database(this).getCountCart());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -196,6 +202,17 @@ public class Home extends AppCompatActivity
         updateToken(FirebaseInstanceId.getInstance().getToken());
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fab.setCount(new Database(this).getCountCart());
+
+        //fix click back button from foodand dont see category
+
+        if(adapter!= null)
+            adapter.startListening();
     }
 
     private void updateToken(String token) {
