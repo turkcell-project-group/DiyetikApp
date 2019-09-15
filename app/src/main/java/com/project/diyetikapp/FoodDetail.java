@@ -11,6 +11,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andremion.counterfab.CounterFab;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,11 +26,11 @@ import com.project.diyetikapp.Model.Order;
 import com.project.diyetikapp.Model.Rating;
 import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.listener.RatingDialogListener;
+import com.stepstone.apprating.AppRatingDialog;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import com.stepstone.apprating.AppRatingDialog;
 
 public class FoodDetail extends AppCompatActivity implements RatingDialogListener {
 
@@ -90,7 +91,8 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                         currentFood.getName(),
                         numberButton.getNumber(),
                         currentFood.getPrice(),
-                        currentFood.getDiscount()
+                        currentFood.getDiscount(),
+                        currentFood.getImage()
                 ));
 
                 Toast.makeText(FoodDetail.this, "Added to Cart", Toast.LENGTH_SHORT).show();

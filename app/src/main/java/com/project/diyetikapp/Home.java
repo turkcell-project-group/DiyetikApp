@@ -44,6 +44,7 @@ import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.ViewHolder.MenuViewHolder;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.C;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,12 +88,12 @@ public class Home extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         //view
-        swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark
-                );
+        );
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -119,16 +120,13 @@ public class Home extends AppCompatActivity
         });
 
 
-
-
-
         //Init Firebase
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
 
         // make sure you move this function after database is getInstance 
         FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
-                .setQuery(category,Category.class)
+                .setQuery(category, Category.class)
                 .build();
 
         adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
@@ -155,11 +153,10 @@ public class Home extends AppCompatActivity
             @Override
             public MenuViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View itemView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.menu_item,parent,false);
+                        .inflate(R.layout.menu_item, parent, false);
                 return new MenuViewHolder(itemView);
             }
         };
-
 
 
         Paper.init(this);
@@ -191,11 +188,10 @@ public class Home extends AppCompatActivity
 
         //Load menu
         recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
-        recycler_menu.setLayoutManager(new GridLayoutManager(this,2));
+        recycler_menu.setLayoutManager(new GridLayoutManager(this, 2));
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recycler_menu.getContext(),
-                R.anim.layout_fall_down );
+                R.anim.layout_fall_down);
         recycler_menu.setLayoutAnimation(controller);
-
 
 
         //Register service
@@ -211,14 +207,14 @@ public class Home extends AppCompatActivity
 
         //fix click back button from foodand dont see category
 
-        if(adapter!= null)
+        if (adapter != null)
             adapter.startListening();
     }
 
     private void updateToken(String token) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference tokens = db.getReference("Tokens");
-        Token data = new Token(token,false);
+        Token data = new Token(token, false);
         tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
@@ -294,10 +290,10 @@ public class Home extends AppCompatActivity
             startActivity(signIn);
 
 
-        }
-        else if (id == R.id.nav_change_pwd)
-        {
+        } else if (id == R.id.nav_change_pwd) {
             showChangePasswordDialog();
+        } else if (id == R.id.nav_home_adress) {
+            showHomeAdressDialog();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -305,17 +301,47 @@ public class Home extends AppCompatActivity
         return true;
     }
 
+    private void showHomeAdressDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+        alertDialog.setTitle("CHANGE HOME ADDRESS");
+        alertDialog.setMessage("Please fill all information");
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View home_adress_layout = inflater.inflate(R.layout.home_adress_layout, null);
+
+        final MaterialEditText edtHomeAdress = (MaterialEditText) home_adress_layout.findViewById(R.id.edtHomeAdress);
+        alertDialog.setView(home_adress_layout);
+        alertDialog.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Common.currentUser.setHomeAdress(edtHomeAdress.getText().toString());
+                FirebaseDatabase.getInstance().getReference("User")
+                        .child(Common.currentUser.getPhone())
+                        .setValue(Common.currentUser)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(Home.this, "Update Adress Succesful", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+            }
+        });
+        alertDialog.show();
+    }
+
     private void showChangePasswordDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle("CHANGE PASSWORD");
         alertDialog.setMessage("Please fill all information");
 
-        LayoutInflater inflater  = LayoutInflater.from(this);
-        View layout_pwd = inflater.inflate(R.layout.change_password_layout,null);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View layout_pwd = inflater.inflate(R.layout.change_password_layout, null);
 
-        final MaterialEditText edtPassword = (MaterialEditText)layout_pwd.findViewById(R.id.edtPassword);
-        final MaterialEditText edtNewPassword = (MaterialEditText)layout_pwd.findViewById(R.id.edtNewPassword);
-        final MaterialEditText edtRepeatPassword = (MaterialEditText)layout_pwd.findViewById(R.id.edtRepeatPassword);
+        final MaterialEditText edtPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtPassword);
+        final MaterialEditText edtNewPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtNewPassword);
+        final MaterialEditText edtRepeatPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtRepeatPassword);
 
         alertDialog.setView(layout_pwd);
 
@@ -329,7 +355,7 @@ public class Home extends AppCompatActivity
                 waitingDialog.show();
 
                 //check old password
-                if (edtPassword.getText().toString().equals(Common.currentUser.getPassword())){
+                if (edtPassword.getText().toString().equals(Common.currentUser.getPassword())) {
                     //check new password and repeat password
                     if (edtNewPassword.getText().toString().equals(edtRepeatPassword.getText().toString())) {
                         Map<String, Object> passwordUpdate = new HashMap<>();
@@ -353,13 +379,12 @@ public class Home extends AppCompatActivity
                         });
 
 
-                    } else{
+                    } else {
                         waitingDialog.dismiss();
                         Toast.makeText(Home.this, "New password doesn't match", Toast.LENGTH_SHORT).show();
                     }
 
-                }
-                else {
+                } else {
                     waitingDialog.dismiss();
                     Toast.makeText(Home.this, "Wrong old password", Toast.LENGTH_SHORT).show();
                 }
@@ -373,10 +398,7 @@ public class Home extends AppCompatActivity
                 dialog.dismiss();   ///kontrol et
             }
         });
-            alertDialog.show();
-
-
-
+        alertDialog.show();
 
 
     }

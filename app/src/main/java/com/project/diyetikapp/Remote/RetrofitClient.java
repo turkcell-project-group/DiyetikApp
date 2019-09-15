@@ -1,7 +1,8 @@
-package com.project.diyetikapp.Service;
+package com.project.diyetikapp.Remote;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit retrofit = null;
@@ -10,6 +11,16 @@ public class RetrofitClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(baseURL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+
+    public static  Retrofit getGoogleClient(String baseURL){
+        if(retrofit == null){
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(baseURL)
+                    .addConverterFactory(ScalarsConverterFactory.create())
                     .build();
         }
         return retrofit;

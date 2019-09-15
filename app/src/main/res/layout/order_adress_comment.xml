@@ -48,6 +48,20 @@
             app:met_floatingLabel="highlight"
             app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rdiShipToAdress"
+                android:text="Ship to this Adress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/rdiHomeAdress"
+                android:text="Home Adress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
     </LinearLayout>
 
 

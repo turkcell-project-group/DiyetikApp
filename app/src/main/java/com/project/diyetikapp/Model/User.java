@@ -6,7 +6,7 @@ public class User{
     private String Phone;
     private  String IsStaff;
     private String secureCode;
-
+private String homeAdress;
     public User() {
     }
 
@@ -58,6 +58,14 @@ public class User{
 
     public void setPassword(String password) {
         Password = password;
+    }
+
+    public String getHomeAdress() {
+        return homeAdress;
+    }
+
+    public void setHomeAdress(String homeAdress) {
+        this.homeAdress = homeAdress;
     }
 }
 
