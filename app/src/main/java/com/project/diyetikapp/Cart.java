@@ -1,23 +1,37 @@
 package com.project.diyetikapp;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -37,8 +51,13 @@ import com.project.diyetikapp.Model.Request;
 import com.project.diyetikapp.Model.Sender;
 import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.Remote.APIService;
+import com.project.diyetikapp.Remote.IGoogleService;
 import com.project.diyetikapp.ViewHolder.CartAdapter;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -52,7 +71,8 @@ import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class Cart extends AppCompatActivity {
+public class Cart extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -70,6 +90,20 @@ public class Cart extends AppCompatActivity {
 
     Place shippingAddress;
 
+    //Location
+
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+
+    private static final int UPDATE_INTERVAL = 5000;
+    private static final int FATEST_INTERVAL = 1000;
+    private static final int DISPLACEMET = 10;
+    private static final int LOCATION_REQUEST_CODE = 999;
+    private static final int FLAT_SERVICES_REQUEST = 9997;
+
+    IGoogleService mGoogleMapService;
+String address,comment;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -80,12 +114,27 @@ public class Cart extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //add this code before setContentView method
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-        .setDefaultFontPath("fonts/restaurant_font.otf")
-        .setFontAttrId(R.attr.fontPath)
-        .build());
+                .setDefaultFontPath("fonts/restaurant_font.otf")
+                .setFontAttrId(R.attr.fontPath)
+                .build());
         setContentView(R.layout.activity_cart);
 
+        mGoogleMapService = Common.getGoogleMapAPI();
 
+//runtime permission
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, LOCATION_REQUEST_CODE);
+        } else {
+            if (checkPlayServices()) {
+                buildGoogleApiClient();
+                createLocationRequest();
+            }
+        }
 
         //Init Service
         mService = Common.getFCMService();
@@ -118,6 +167,51 @@ public class Cart extends AppCompatActivity {
         loadListFood();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case LOCATION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (checkPlayServices()) {
+                        buildGoogleApiClient();
+                        createLocationRequest();
+                    }
+                }
+            }
+            break;
+        }
+    }
+
+    private synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode))
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, FLAT_SERVICES_REQUEST).show();
+            else {
+                Toast.makeText(this, "This device is not supported", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FATEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setSmallestDisplacement(DISPLACEMET);
+    }
+
     private void showAlertDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Cart.this);
         alertDialog.setTitle("One more step!");
@@ -126,27 +220,84 @@ public class Cart extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         View order_adress_comment = inflater.inflate(R.layout.order_adress_comment, null);
 
-        PlaceAutocompleteFragment edtAdress=(PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        final PlaceAutocompleteFragment edtAdress = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         edtAdress.getView().findViewById(R.id.place_autocomplete_search_button).setVisibility(View.GONE);
-        ((EditText)edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).setHint("Adresinizi giriniz");
-        ((EditText)edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14);
-
+        ((EditText) edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).setHint("Adresinizi giriniz");
+        ((EditText) edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(14);
         edtAdress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
 
-                shippingAddress=place;
+                shippingAddress = place;
             }
 
             @Override
             public void onError(Status status) {
 
-                Log.e("ERROR",status.getStatusMessage());
+                Log.e("ERROR", status.getStatusMessage());
             }
         });
 
-       // final MaterialEditText edtAdress = order_adress_comment.findViewById(R.id.edtAdress);
+        // final MaterialEditText edtAdress = order_adress_comment.findViewById(R.id.edtAdress);
         final MaterialEditText edtComment = order_adress_comment.findViewById(R.id.edtComment);
+
+        //Radio
+        final RadioButton rdiShipToAdress = order_adress_comment.findViewById(R.id.rdiShipToAdress);
+        final RadioButton rdiHomeAdress = order_adress_comment.findViewById(R.id.rdiHomeAdress);
+
+        rdiHomeAdress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean b) {
+                if(b){
+                    if(Common.currentUser.getHomeAdress() != null
+                    || !TextUtils.isEmpty(Common.currentUser.getHomeAdress())){
+                        address = Common.currentUser.getHomeAdress();
+                        ((EditText) edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).
+                                setText(address);
+
+                    }else
+                        Toast.makeText(Cart.this,"Please update your Home Adress",Toast.LENGTH_SHORT).show();
+
+
+                }
+            }
+        });
+
+
+        rdiShipToAdress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean b) {
+                if (b) {
+                    mGoogleMapService.getAdressName(String.format("https://maps.googleapis.ccom/maaps/api/geocode/json?latlng=%f,%f&sensor=false",
+                            mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude()))
+                            .enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response.body().toString());
+                                        JSONArray resultArray = jsonObject.getJSONArray("results");
+                                        JSONObject firstObject = resultArray.getJSONObject(0);
+                                        address = firstObject.getString("formatted_address");
+                                        ((EditText) edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).
+                                                setText(address);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    Toast.makeText(Cart.this, " " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+
+            }
+        });
+
+
         alertDialog.setView(order_adress_comment);
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
@@ -154,6 +305,26 @@ public class Cart extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                if (!rdiShipToAdress.isChecked() && !rdiHomeAdress.isChecked()) {
+                    if (shippingAddress != null)
+                        address = shippingAddress.getAddress().toString();
+                    else {
+                        Toast.makeText(Cart.this, "Pleasee enter adress or select option adress", Toast.LENGTH_SHORT).show();
+                        getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment))
+                                .commit();
+                        return;
+                    }
+                }
+                if (TextUtils.isEmpty(address)) {
+                    Toast.makeText(Cart.this, "Pleasee enter adress or select option adress", Toast.LENGTH_SHORT).show();
+                    getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment))
+                            .commit();
+                    return;
+
+                }
+                comment = edtComment.getText().toString();
+                String formatAccount = txtTotalPrice.getText().toString()
+                        .replace("$", "").replace(",", "");
                 Request request = new Request(
                         Common.currentUser.getPhone(),
                         Common.currentUser.getName(),
@@ -161,7 +332,7 @@ public class Cart extends AppCompatActivity {
                         txtTotalPrice.getText().toString(),
                         "1",
                         cart,
-                        String.format("%s,%s",shippingAddress.getLatLng().latitude,shippingAddress),
+                        String.format("%s,%s", shippingAddress.getLatLng().latitude, shippingAddress),
                         edtComment.getText().toString()
                 );
                 // submit to firebase
@@ -205,19 +376,19 @@ public class Cart extends AppCompatActivity {
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                                   if(response.code() == 200) {
-                                       if (response.body().success == 1) {
-                                           Toast.makeText(Cart.this, "Thank you,Order Place", Toast.LENGTH_SHORT).show();
-                                           finish();
-                                       } else {
-                                           Toast.makeText(Cart.this, "Failed!!", Toast.LENGTH_SHORT).show();
-                                       }
-                                   }
+                                    if (response.code() == 200) {
+                                        if (response.body().success == 1) {
+                                            Toast.makeText(Cart.this, "Thank you,Order Place", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        } else {
+                                            Toast.makeText(Cart.this, "Failed!!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
                                 }
 
                                 @Override
                                 public void onFailure(Call<MyResponse> call, Throwable t) {
-                                    Log.e("ERROR",t.getMessage());
+                                    Log.e("ERROR", t.getMessage());
 
                                 }
                             });
@@ -273,5 +444,50 @@ public class Cart extends AppCompatActivity {
 
         //refresh
         loadListFood();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        displayLocation();
+        startLocationUpdates();
+    }
+
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    private void displayLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Log.d("LOCATION", "Your location : " + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
+        } else {
+            Log.d("LOCATION", "Could not get your location");
+
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        displayLocation();
+
     }
 }
