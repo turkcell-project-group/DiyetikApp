@@ -28,17 +28,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andremion.counterfab.CounterFab;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Interface.ItemClickListener;
+import com.project.diyetikapp.Model.Banner;
 import com.project.diyetikapp.Model.Category;
 import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.ViewHolder.MenuViewHolder;
@@ -66,6 +73,10 @@ public class Home extends AppCompatActivity
     FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
     SwipeRefreshLayout swipeRefreshLayout;
     CounterFab fab;
+
+    //slider
+    HashMap<String,String> image_list;
+    SliderLayout mSlider;
 
 
     @Override
@@ -197,7 +208,69 @@ public class Home extends AppCompatActivity
         //Register service
         updateToken(FirebaseInstanceId.getInstance().getToken());
 
+        //setup slider
+        //need call this function after you init database firebase
+        setupSlider();
 
+
+    }
+
+    private void setupSlider() {
+        mSlider = (SliderLayout)findViewById(R.id.slider);
+        image_list = new HashMap<>();
+
+        final DatabaseReference banners = database.getReference("Banner");
+
+        banners.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot postSnapshot:dataSnapshot.getChildren())
+                {
+                    Banner banner = postSnapshot.getValue(Banner.class);
+                    //We will concat string name and id like
+                    //PIZZA_01 => and we will use PIZZA for show descrition , 01 for food id to click
+                    image_list.put(banner.getName()+"_"+banner.getId(),banner.getImage());
+                }
+                for (String key:image_list.keySet())
+                {
+                    String[] keySplit = key.split("_");
+                    String nameOfFood = keySplit[0];
+                    String idOfFood = keySplit[1];
+
+
+                    //create slider
+                    final TextSliderView textSliderView = new TextSliderView(getBaseContext());
+                    textSliderView
+                            .description(nameOfFood)
+                            .image(image_list.get(key))
+                            .setScaleType(BaseSliderView.ScaleType.Fit)
+                            .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                                @Override
+                                public void onSliderClick(BaseSliderView slider) {
+
+                                    Intent intent = new Intent(Home.this,FoodDetail.class);
+                                    // we will send food id to Fooddetail
+                                    intent.putExtras(textSliderView.getBundle());
+                                    startActivity(intent);
+                                }
+                            });
+                    //add extra bundle
+                    textSliderView.bundle(new Bundle());
+                    textSliderView.getBundle().putString("FoodId",idOfFood);
+
+                    mSlider.addSlider(textSliderView);
+                    
+                    // remove event after finish
+                    banners.removeEventListener(this);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
