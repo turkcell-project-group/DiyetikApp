@@ -175,6 +175,22 @@
                 
             </android.support.v7.widget.CardView>
 
+            <info.hoang8f.widget.FButton
+                android:id="@+id/btnShowComment"
+                android:text="Show Comment"
+                android:textColor="@android:color/background_dark"
+                android:layout_marginRight="8dp"
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content"
+                app:fButtonColor="@color/colorPrimary"
+                app:shadowColor="@android:color/black"
+                app:shadowEnabled="true"
+                app:shadowHeight="5dp"
+                app:cornerRadius="4dp"/>
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

@@ -3,6 +3,7 @@
     package="com.project.diyetikapp">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,34 +11,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ShowComment"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyADXEXI4ab2xptw0QerfJ7Bpzs1g9A9wek"></meta-data>
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"></meta-data>
+            android:value="AIzaSyADXEXI4ab2xptw0QerfJ7Bpzs1g9A9wek" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <activity android:name=".OrderStatus" />
         <activity android:name=".Cart" />
         <activity android:name=".FoodDetail" />
         <activity android:name=".FoodList" />
+
         <service android:name=".Service.MyFirebaseIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        
+
         <provider
-            android:authorities="com.facebook.app.FacebookContentProviderfb442974716304210"
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true"></provider>
+            android:authorities="com.facebook.app.FacebookContentProviderfb442974716304210"
+            android:exported="true" />
 
         <service android:name=".Service.MyFirebaseMessaging">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".Home"
             android:label="@string/title_activity_home"
