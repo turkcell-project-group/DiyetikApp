@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andremion.counterfab.CounterFab;
+import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
@@ -271,6 +272,11 @@ public class Home extends AppCompatActivity
 
             }
         });
+        mSlider.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
+        mSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+        mSlider.setCustomAnimation(new DescriptionAnimation());
+        mSlider.setDuration(4000);
+
     }
 
     @Override
@@ -308,6 +314,7 @@ public class Home extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+        mSlider.stopAutoCycle();
     }
 
     @Override
