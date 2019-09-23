@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -161,6 +163,55 @@ public class FoodList extends AppCompatActivity {
                         return;
                     }
                 }
+                //search
+                materialSearchBar = (MaterialSearchBar)findViewById(R.id.searchBar);
+                materialSearchBar.setHint("Enter your food");
+                //materialSearchBar.setSpeechMode(false); No need, because we already define it at XML
+                loadSuggest(); // write function to load Suggest from Firebase
+                materialSearchBar.setCardViewElevation(10);
+                materialSearchBar.addTextChangeListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        //when user type their text, we will change suggest list
+
+                        List<String> suggest = new ArrayList<String>();
+                        for (String search :suggestList){ // loop in suggest List.
+                            if (search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))suggest.add(search);
+
+                        }
+                        materialSearchBar.setLastSuggestions(suggest);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+                    @Override
+                    public void onSearchStateChanged(boolean enabled) {
+                        // when search bar is close
+                        //restore original suggest adapter
+                        if (!enabled)
+                            recyclerView.setAdapter(adapter);
+                    }
+                    @Override
+                    public void onSearchConfirmed(CharSequence text) {
+                        // when search finish
+                        //show result of search adapter
+                        startSearch(text);
+                    }
+
+                    @Override
+                    public void onButtonClicked(int buttonCode) {
+
+                    }
+                });
             }
         });
 
@@ -170,64 +221,18 @@ public class FoodList extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        LayoutAnimationController controller= AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),
+                R.anim.layout_from_left);
+        recyclerView.setLayoutAnimation(controller);
 
 
-        //search
-        materialSearchBar = (MaterialSearchBar)findViewById(R.id.searchBar);
-        materialSearchBar.setHint("Enter your food");
-        //materialSearchBar.setSpeechMode(false); No need, because we already define it at XML
-        loadSuggest(); // write function to load Suggest from Firebase
-        materialSearchBar.setLastSuggestions(suggestList);
-        materialSearchBar.setCardViewElevation(10);
-        materialSearchBar.addTextChangeListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //when user type their text, we will change suggest list
-
-                List<String> suggest = new ArrayList<String>();
-                for (String search :suggestList){ // loop in suggest List.
-                    if (search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))suggest.add(search);
-
-                }
-                materialSearchBar.setLastSuggestions(suggest);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-            @Override
-            public void onSearchStateChanged(boolean enabled) {
-                 // when search bar is close
-                //restore original suggest adapter
-                if (!enabled)
-                    recyclerView.setAdapter(adapter);
-            }
-            @Override
-            public void onSearchConfirmed(CharSequence text) {
-                // when search finish
-                //show result of search adapter
-                startSearch(text);
-            }
-
-            @Override
-            public void onButtonClicked(int buttonCode) {
-
-            }
-        });
         
     }
 
     private void startSearch(CharSequence text)  {
         //create query by name
-        Query searchByName = foodList.orderByChild("Name").equalTo(text.toString());
+        Query searchByName = foodList.orderByChild("name").equalTo(text.toString());
         //create options with query
         FirebaseRecyclerOptions<Food> foodOptions =new FirebaseRecyclerOptions.Builder<Food>()
                 .setQuery(searchByName,Food.class)
@@ -265,7 +270,7 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void loadSuggest() {
-        foodList.orderByChild("MenuId").equalTo(categoryId).addValueEventListener(new ValueEventListener() {
+        foodList.orderByChild("menuId").equalTo(categoryId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot:dataSnapshot.getChildren()){
@@ -273,6 +278,7 @@ public class FoodList extends AppCompatActivity {
                     suggestList.add(item.getName()); // add name of food to suggest list
 
                 }
+                materialSearchBar.setLastSuggestions(suggestList);
             }
 
             @Override
