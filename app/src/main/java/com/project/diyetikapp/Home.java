@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Interface.ItemClickListener;
@@ -372,7 +375,11 @@ public class Home extends AppCompatActivity
 
         } else if (id == R.id.nav_change_pwd) {
             showChangePasswordDialog();
-        } else if (id == R.id.nav_home_adress) {
+        }else if (id == R.id.nav_settings) {
+            showSettingDialog();
+        }
+
+        else if (id == R.id.nav_home_adress) {
             showHomeAdressDialog();
         }
 
@@ -381,17 +388,53 @@ public class Home extends AppCompatActivity
         return true;
     }
 
+    private void showSettingDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+        alertDialog.setTitle("AYARLAR");
+        alertDialog.setMessage("Tüm alanları doldurunuz!");
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View layout_setting = inflater.inflate(R.layout.setting_layout, null);
+
+        final CheckBox ckb_new=(CheckBox)layout_setting.findViewById(R.id.ckb_check_box);
+        Paper.init(this);
+        String isSubscribe= Paper.book().read("sub_new");
+        if (isSubscribe==null|| TextUtils.isEmpty(isSubscribe)||isSubscribe.equals("false"))
+            ckb_new.setChecked(false);
+        else
+            ckb_new.setChecked(true);
+
+
+        alertDialog.setView(layout_setting);
+        alertDialog.setPositiveButton("TAMAM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                if(ckb_new.isChecked()){
+                    FirebaseMessaging.getInstance().subscribeToTopic(Common.topicName);
+                    Paper.book().write("sub_new","true");
+                }
+                else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(Common.topicName);
+                    Paper.book().write("sub_new","false");
+                }
+            }
+        });
+        alertDialog.show();
+    }
+
     private void showHomeAdressDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
-        alertDialog.setTitle("CHANGE HOME ADDRESS");
-        alertDialog.setMessage("Please fill all information");
+        alertDialog.setTitle("ADRESİ DEĞİŞTİR");
+        alertDialog.setMessage("Tüm alanları doldurunuz!");
 
         LayoutInflater inflater = LayoutInflater.from(this);
         View home_adress_layout = inflater.inflate(R.layout.home_adress_layout, null);
 
         final MaterialEditText edtHomeAdress = (MaterialEditText) home_adress_layout.findViewById(R.id.edtHomeAdress);
         alertDialog.setView(home_adress_layout);
-        alertDialog.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("GÜNCELLE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -402,7 +445,7 @@ public class Home extends AppCompatActivity
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(Home.this, "Update Adress Succesful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Home.this, "Adres güncellemesi başarılı!", Toast.LENGTH_SHORT).show();
 
                             }
                         });

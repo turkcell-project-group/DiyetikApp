@@ -10,6 +10,8 @@ import com.project.diyetikapp.Remote.IGoogleService;
 import com.project.diyetikapp.Remote.RetrofitClient;
 
 public class Common {
+    public static String topicName= "News";
+
     public static User currentUser;
 
     public static String PHONE_TEXT= "userPhone";
