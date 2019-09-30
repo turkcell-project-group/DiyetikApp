@@ -26,41 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-,View.OnCreateContextMenuListener{
 
-    public TextView txt_cart_name,txt_price;
-    public ElegantNumberButton btn_quantity;
-    public  ImageView cart_image;
-
-    private ItemClickListener itemClickListener;
-
-    public void setTxt_cart_name(TextView txt_cart_name){
-        this.txt_cart_name= txt_cart_name;
-    }
-
-    public CartViewHolder(@NonNull View itemView) {
-        super(itemView);
-        txt_cart_name=(TextView)itemView.findViewById(R.id.cart_item_name);
-        txt_price=(TextView)itemView.findViewById(R.id.cart_item_price);
-        btn_quantity =(ElegantNumberButton) itemView.findViewById(R.id.btn_quantity);
-        cart_image =(ImageView) itemView.findViewById(R.id.cart_image);
-
-        itemView.setOnCreateContextMenuListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-        menu.setHeaderTitle("Select Action");
-        menu.add(0,0,getAdapterPosition(), Common.DELETE);
-    }
-}
 public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
     private List<Order> listData =new ArrayList<>();
     private Cart cart;
@@ -100,7 +66,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
 
                //Calculate total price
                int total = 0;
-               List<Order> orders = new Database(cart).getCarts();
+               List<Order> orders = new Database(cart).getCarts(Common.currentUser.getPhone());
                for (Order item : orders)
                    total += (Integer.parseInt(order.getPrice())) * (Integer.parseInt(order.getQuantity()));
 
@@ -122,5 +88,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
     @Override
     public int getItemCount() {
         return listData.size();
+    }
+
+    public  Order getItem(int position){
+        return  listData.get(position);
+    }
+    public void removeItem(int position){
+        listData.remove(position);
+        notifyItemRemoved(position);
+    }
+    public void restoreItem(Order item,int position){
+        listData.add(position,item);
+        notifyItemInserted(position);
     }
 }

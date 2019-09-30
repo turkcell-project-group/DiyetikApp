@@ -4,15 +4,18 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +48,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Database.Database;
+import com.project.diyetikapp.Helper.RecyclerItemTouchHelper;
+import com.project.diyetikapp.Interface.RecyclerItemTouchListener;
 import com.project.diyetikapp.Model.MyResponse;
 import com.project.diyetikapp.Model.Notification;
 import com.project.diyetikapp.Model.Order;
@@ -53,6 +59,7 @@ import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.Remote.APIService;
 import com.project.diyetikapp.Remote.IGoogleService;
 import com.project.diyetikapp.ViewHolder.CartAdapter;
+import com.project.diyetikapp.ViewHolder.CartViewHolder;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONArray;
@@ -72,7 +79,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Cart extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, RecyclerItemTouchListener {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -89,7 +96,7 @@ public class Cart extends AppCompatActivity implements GoogleApiClient.Connectio
     APIService mService;
 
     Place shippingAddress;
-
+    RelativeLayout rootLayout;
     //Location
 
     private LocationRequest mLocationRequest;
@@ -103,7 +110,8 @@ public class Cart extends AppCompatActivity implements GoogleApiClient.Connectio
     private static final int FLAT_SERVICES_REQUEST = 9997;
 
     IGoogleService mGoogleMapService;
-String address,comment;
+    String address, comment;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -120,7 +128,7 @@ String address,comment;
         setContentView(R.layout.activity_cart);
 
         mGoogleMapService = Common.getGoogleMapAPI();
-
+        rootLayout = findViewById(R.id.rootLayout);
 //runtime permission
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -149,6 +157,9 @@ String address,comment;
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        //Swipe to Delete
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
         txtTotalPrice = (TextView) findViewById(R.id.total);
         btnPlace = (FButton) findViewById(R.id.btnPlaceOrder);
 
@@ -248,15 +259,15 @@ String address,comment;
         rdiHomeAdress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean b) {
-                if(b){
-                    if(Common.currentUser.getHomeAdress() != null
-                    || !TextUtils.isEmpty(Common.currentUser.getHomeAdress())){
+                if (b) {
+                    if (Common.currentUser.getHomeAdress() != null
+                            || !TextUtils.isEmpty(Common.currentUser.getHomeAdress())) {
                         address = Common.currentUser.getHomeAdress();
                         ((EditText) edtAdress.getView().findViewById(R.id.place_autocomplete_search_input)).
                                 setText(address);
 
-                    }else
-                        Toast.makeText(Cart.this,"Please update your Home Adress",Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(Cart.this, "Please update your Home Adress", Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -340,7 +351,7 @@ String address,comment;
                 String order_number = String.valueOf(System.currentTimeMillis());
                 requests.child(order_number).setValue(request);
                 // delete cart
-                new Database(getBaseContext()).cleanCart();
+                new Database(getBaseContext()).cleanCart(Common.currentUser.getPhone());
 
                 sendNotificationOrder(order_number);
                 /*Toast.makeText(Cart.this, "Thank you , Order Place", Toast.LENGTH_SHORT).show();
@@ -406,7 +417,7 @@ String address,comment;
     }
 
     private void loadListFood() {
-        cart = new Database(this).getCarts();
+        cart = new Database(this).getCarts(Common.currentUser.getPhone());
 
         adapter = new CartAdapter(cart, this);
         adapter.notifyDataSetChanged();
@@ -436,7 +447,7 @@ String address,comment;
         cart.remove(position);
 
         // we will delete all old data from all old data sqlite
-        new Database(this).cleanCart();
+        new Database(this).cleanCart(Common.currentUser.getPhone());
 
         //we will update new data from list<order> to sqlite
         for (Order item : cart)
@@ -489,5 +500,45 @@ String address,comment;
         mLastLocation = location;
         displayLocation();
 
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int directions, int position) {
+        if (viewHolder instanceof CartViewHolder) {
+            String name = ((CartAdapter) recyclerView.getAdapter()).getItem(viewHolder.getAdapterPosition()).getProductName();
+
+            final Order deleteItem = ((CartAdapter) recyclerView.getAdapter()).getItem(viewHolder.getAdapterPosition());
+            final int deleteIndex = viewHolder.getAdapterPosition();
+            adapter.removeItem(deleteIndex);
+            new Database(getBaseContext()).removeFromCart(deleteItem.getProductId(), Common.currentUser.getPhone());
+            int total = 0;
+            List<Order> orders = new Database(getBaseContext()).getCarts(Common.currentUser.getPhone());
+            for (Order item : orders)
+                total += (Integer.parseInt(item.getPrice())) * (Integer.parseInt(item.getQuantity()));
+
+            Locale locale = new Locale("en", "US");
+            NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
+
+            txtTotalPrice.setText(fmt.format(total));
+            Snackbar snackbar = Snackbar.make(rootLayout, name + "removed from cart!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    adapter.restoreItem(deleteItem, deleteIndex);
+                    new Database(getApplication()).addToCart(deleteItem);
+                    int total = 0;
+                    List<Order> orders = new Database(getBaseContext()).getCarts(Common.currentUser.getPhone());
+                    for (Order item : orders)
+                        total += (Integer.parseInt(item.getPrice())) * (Integer.parseInt(item.getQuantity()));
+
+                    Locale locale = new Locale("en", "US");
+                    NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
+
+                    txtTotalPrice.setText(fmt.format(total));
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 }
