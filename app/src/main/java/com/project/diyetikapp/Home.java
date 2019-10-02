@@ -79,7 +79,7 @@ public class Home extends AppCompatActivity
     CounterFab fab;
 
     //slider
-    HashMap<String,String> image_list;
+    HashMap<String, String> image_list;
     SliderLayout mSlider;
 
 
@@ -220,7 +220,7 @@ public class Home extends AppCompatActivity
     }
 
     private void setupSlider() {
-        mSlider = (SliderLayout)findViewById(R.id.slider);
+        mSlider = (SliderLayout) findViewById(R.id.slider);
         image_list = new HashMap<>();
 
         final DatabaseReference banners = database.getReference("Banner");
@@ -229,15 +229,13 @@ public class Home extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot postSnapshot:dataSnapshot.getChildren())
-                {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Banner banner = postSnapshot.getValue(Banner.class);
                     //We will concat string name and id like
                     //PIZZA_01 => and we will use PIZZA for show descrition , 01 for food id to click
-                    image_list.put(banner.getName()+"_"+banner.getId(),banner.getImage());
+                    image_list.put(banner.getName() + "_" + banner.getId(), banner.getImage());
                 }
-                for (String key:image_list.keySet())
-                {
+                for (String key : image_list.keySet()) {
                     String[] keySplit = key.split("_");
                     String nameOfFood = keySplit[0];
                     String idOfFood = keySplit[1];
@@ -253,7 +251,7 @@ public class Home extends AppCompatActivity
                                 @Override
                                 public void onSliderClick(BaseSliderView slider) {
 
-                                    Intent intent = new Intent(Home.this,FoodDetail.class);
+                                    Intent intent = new Intent(Home.this, FoodDetail.class);
                                     // we will send food id to Fooddetail
                                     intent.putExtras(textSliderView.getBundle());
                                     startActivity(intent);
@@ -261,10 +259,10 @@ public class Home extends AppCompatActivity
                             });
                     //add extra bundle
                     textSliderView.bundle(new Bundle());
-                    textSliderView.getBundle().putString("FoodId",idOfFood);
+                    textSliderView.getBundle().putString("FoodId", idOfFood);
 
                     mSlider.addSlider(textSliderView);
-                    
+
                     // remove event after finish
                     banners.removeEventListener(this);
                 }
@@ -341,7 +339,7 @@ public class Home extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.nav_search)
-            startActivity(new Intent(Home.this,SearchActivity.class));
+            startActivity(new Intent(Home.this, SearchActivity.class));
 
         return super.onOptionsItemSelected(item);
     }
@@ -354,6 +352,10 @@ public class Home extends AppCompatActivity
 
         if (id == R.id.nav_menu) {
             // Handle the camera action
+        } else if (id == R.id.nav_fav) {
+            Intent cartIntent = new Intent(Home.this, FavoritesActivity.class);
+            startActivity(cartIntent);
+
         } else if (id == R.id.nav_cart) {
             Intent cartIntent = new Intent(Home.this, Cart.class);
             startActivity(cartIntent);
@@ -375,11 +377,9 @@ public class Home extends AppCompatActivity
 
         } else if (id == R.id.nav_change_pwd) {
             showChangePasswordDialog();
-        }else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_settings) {
             showSettingDialog();
-        }
-
-        else if (id == R.id.nav_home_adress) {
+        } else if (id == R.id.nav_home_adress) {
             showHomeAdressDialog();
         }
 
@@ -396,10 +396,10 @@ public class Home extends AppCompatActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         View layout_setting = inflater.inflate(R.layout.setting_layout, null);
 
-        final CheckBox ckb_new=(CheckBox)layout_setting.findViewById(R.id.ckb_check_box);
+        final CheckBox ckb_new = (CheckBox) layout_setting.findViewById(R.id.ckb_check_box);
         Paper.init(this);
-        String isSubscribe= Paper.book().read("sub_new");
-        if (isSubscribe==null|| TextUtils.isEmpty(isSubscribe)||isSubscribe.equals("false"))
+        String isSubscribe = Paper.book().read("sub_new");
+        if (isSubscribe == null || TextUtils.isEmpty(isSubscribe) || isSubscribe.equals("false"))
             ckb_new.setChecked(false);
         else
             ckb_new.setChecked(true);
@@ -411,13 +411,12 @@ public class Home extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
 
-                if(ckb_new.isChecked()){
+                if (ckb_new.isChecked()) {
                     FirebaseMessaging.getInstance().subscribeToTopic(Common.topicName);
-                    Paper.book().write("sub_new","true");
-                }
-                else {
+                    Paper.book().write("sub_new", "true");
+                } else {
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(Common.topicName);
-                    Paper.book().write("sub_new","false");
+                    Paper.book().write("sub_new", "false");
                 }
             }
         });

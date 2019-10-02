@@ -226,8 +226,19 @@ public class SearchActivity extends AppCompatActivity {
                 viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        Favorites favorites =  new Favorites();
+                        favorites.setFoodId(adapter.getRef(position).getKey());
+                        favorites.setFoodName(model.getName());
+                        favorites.setFoodDescription(model.getDescription());
+                        favorites.setFoodDiscount(model.getDiscount());
+                        favorites.setFoodImage(model.getImage());
+                        favorites.setFoodMenuId(model.getMenuId());
+                        favorites.setUserPhone(Common.currentUser.getPhone());
+                        favorites.setFoodPrice(model.getPrice());
+
                         if (!localDB.isFavorite(adapter.getRef(position).getKey(), Common.currentUser.getPhone())) {
-                            localDB.addToFavorites(adapter.getRef(position).getKey(), Common.currentUser.getPhone());
+                            localDB.addToFavorites(favorites);
                             viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
                             Toast.makeText(SearchActivity.this, "" + model.getName() + "was added to Favorites", Toast.LENGTH_SHORT).show();
 
