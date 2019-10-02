@@ -94,7 +94,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/compatıble_screen_manıfest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javac" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lınt_jar" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/merged_manıfests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/processed_res" />
