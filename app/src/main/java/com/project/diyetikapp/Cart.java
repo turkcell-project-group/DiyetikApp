@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,16 +44,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Helper.RecyclerItemTouchHelper;
 import com.project.diyetikapp.Interface.RecyclerItemTouchListener;
+import com.project.diyetikapp.Model.DataMessage;
 import com.project.diyetikapp.Model.MyResponse;
-import com.project.diyetikapp.Model.Notification;
 import com.project.diyetikapp.Model.Order;
 import com.project.diyetikapp.Model.Request;
-import com.project.diyetikapp.Model.Sender;
 import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.Remote.APIService;
 import com.project.diyetikapp.Remote.IGoogleService;
@@ -68,8 +65,10 @@ import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import info.hoang8f.widget.FButton;
 import retrofit2.Call;
@@ -381,9 +380,17 @@ public class Cart extends AppCompatActivity implements GoogleApiClient.Connectio
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Token serverToken = postSnapshot.getValue(Token.class);
-                    Notification notification = new Notification("Diyet Sepeti", "Tou have new order" + order_number);
-                    Sender content = new Sender(serverToken.getToken(), notification);
-                    mService.sendNotification(content)
+//
+//                    Notification notification = new Notification("Diyet Sepeti", "Tou have new order" + order_number);
+//                    Sender content = new Sender(serverToken.getToken(), notification);
+
+                    Map<String,String> dataSend = new HashMap<>();
+                    dataSend.put("title","DiyetikApp");
+                    dataSend.put("message","You have new order "+ order_number);
+                    DataMessage dataMessage = new DataMessage(serverToken.getToken(),dataSend);
+
+
+                    mService.sendNotification(dataMessage)
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {

@@ -57,4 +57,16 @@ public class NotificationHelper extends ContextWrapper {
                 .setSound(soundUri)
                 .setAutoCancel(false);
     }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public android.app.Notification.Builder getDiyetikChannelNotification(String title, String body,
+                                                                          Uri soundUri){
+        return new android.app.Notification.Builder(getApplicationContext(), DIYETIK_CHANEL_ID)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSound(soundUri)
+                .setAutoCancel(false);
+    }
+
 }

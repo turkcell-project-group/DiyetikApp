@@ -1,5 +1,6 @@
 package com.project.diyetikapp.Service;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -14,43 +15,63 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Helper.NotificationHelper;
 import com.project.diyetikapp.MainActivity;
-import com.project.diyetikapp.Model.Notification;
 import com.project.diyetikapp.OrderStatus;
 import com.project.diyetikapp.R;
 
+import java.util.Map;
 import java.util.Random;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            sendNotificationAPI26(remoteMessage);
-        else
-            sendNotification(remoteMessage);
+        if (remoteMessage.getData() != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                sendNotificationAPI26(remoteMessage);
+            else
+                sendNotification(remoteMessage);
 
-    }
+        }}
 
     private void sendNotificationAPI26(RemoteMessage remoteMessage) {
-        RemoteMessage.Notification notification = remoteMessage.getNotification();
-        String title=notification.getTitle();
-        String content=notification.getBody();
+        Map<String, String> data = remoteMessage.getData();
+        String title = data.get("title");
+        String message = data.get("message");
 
         //click to notificatio => go to order list
-        Intent ıntent = new Intent(this, OrderStatus.class);
-        ıntent.putExtra(Common.PHONE_TEXT, Common.currentUser.getPhone());
-        ıntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, ıntent, PendingIntent.FLAG_ONE_SHOT);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        PendingIntent pendingIntent;
+        NotificationHelper helper;
+        Notification.Builder builder;
 
-        NotificationHelper helper=new NotificationHelper(this);
-        android.app.Notification.Builder builder=helper.getDiyetikChannelNotification(title,content,pendingIntent,defaultSoundUri);
+        if (Common.currentUser != null) {
 
-        helper.getManager().notify(new Random().nextInt(),builder.build());
+            Intent ıntent = new Intent(this, OrderStatus.class);
+            ıntent.putExtra(Common.PHONE_TEXT, Common.currentUser.getPhone());
+            ıntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, ıntent, PendingIntent.FLAG_ONE_SHOT);
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            helper = new NotificationHelper(this);
+            builder = helper.getDiyetikChannelNotification(title, message, pendingIntent, defaultSoundUri);
+
+            helper.getManager().notify(new Random().nextInt(), builder.build());
+        }
+        else {  //fix crash if notification send from news system (Common.currentUser== null)
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            helper = new NotificationHelper(this);
+            builder = helper.getDiyetikChannelNotification(title, message, defaultSoundUri);
+
+            helper.getManager().notify(new Random().nextInt(), builder.build());
+
+        }
     }
 
+
     private void sendNotification(RemoteMessage remoteMessage) {
-        RemoteMessage.Notification notification = remoteMessage.getNotification();
+        Map<String, String> data = remoteMessage.getData();
+        String title = data.get("title");
+        String message = data.get("message");
+
         Intent ıntent = new Intent(this, MainActivity.class);
         ıntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, ıntent, PendingIntent.FLAG_ONE_SHOT);
@@ -58,8 +79,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle(notification.getTitle())
-                .setContentText(notification.getBody())
+                .setContentTitle(title)
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
