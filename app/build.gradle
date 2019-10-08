@@ -21,7 +21,6 @@ android {
 }
 
 
-
 dependencies {
     //slider
     implementation 'com.nineoldandroids:library:2.4.0'
