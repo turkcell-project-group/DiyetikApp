@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Database extends SQLiteAssetHelper {
     private static final String DB_NAME = "DiyetikAppDB.db";
-    private static final int DB_VER = 2;
+    private static final int DB_VER = 1;
 
     public Database(Context context){
         super(context, DB_NAME ,null ,DB_VER);
@@ -97,16 +97,21 @@ public class Database extends SQLiteAssetHelper {
 
     public int getCountCart() {
         int count=0;
-        SQLiteDatabase db = getReadableDatabase();
-        String query = String.format("SELECT COUNT (*) FROM OrderDetail");
-        Cursor cursor = db.rawQuery(query,null);
-        if(cursor.moveToFirst()){
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+            String query = String.format("SELECT COUNT (*) FROM OrderDetail");
+            Cursor cursor = db.rawQuery(query,null);
+            if(cursor.moveToFirst()){
 
-            do {
-                count= cursor.getInt(0);
+                do {
+                    count= cursor.getInt(0);
 
-            }while (cursor.moveToNext());
+                }while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+            System.out.println("Hata"+e);
         }
+
         return count;
     }
 

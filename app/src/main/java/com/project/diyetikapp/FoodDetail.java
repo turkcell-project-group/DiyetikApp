@@ -1,10 +1,10 @@
 package com.project.diyetikapp;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,12 +28,9 @@ import com.project.diyetikapp.Model.Food;
 import com.project.diyetikapp.Model.Order;
 import com.project.diyetikapp.Model.Rating;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
 //import com.stepstone.apprating.AppRatingDialog;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 import info.hoang8f.widget.FButton;
 

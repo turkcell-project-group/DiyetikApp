@@ -4,22 +4,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -55,7 +53,6 @@ import com.project.diyetikapp.Model.Token;
 import com.project.diyetikapp.ViewHolder.MenuViewHolder;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
-import com.stepstone.apprating.C;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +67,7 @@ public class Home extends AppCompatActivity
 
     FirebaseDatabase database;
     DatabaseReference category;
-    TextView txtFullName;
+    TextView  txtFullName;
     RecyclerView recycler_menu;
     RecyclerView.LayoutManager layoutManager;
 
@@ -181,8 +178,8 @@ public class Home extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent cartIntent = new Intent(Home.this, Cart.class);
-                startActivity(cartIntent);
+//                Intent cartIntent = new Intent(Home.this, Cart.class);
+//                startActivity(cartIntent);
             }
         });
         fab.setCount(new Database(this).getCountCart());
@@ -199,7 +196,7 @@ public class Home extends AppCompatActivity
         //set name for user
         View headerView = navigationView.getHeaderView(0);
         txtFullName = (TextView) headerView.findViewById(R.id.txtFullName);
-        txtFullName.setText(Common.currentUser.getName());
+//        txtFullName.setText(Common.currentUser.getName());
 
         //Load menu
         recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
@@ -210,11 +207,11 @@ public class Home extends AppCompatActivity
 
 
         //Register service
-        updateToken(FirebaseInstanceId.getInstance().getToken());
+        //        updateToken(FirebaseInstanceId.getInstance().getToken());
 
         //setup slider
         //need call this function after you init database firebase
-        setupSlider();
+       // setupSlider();
 
 
     }
@@ -297,7 +294,7 @@ public class Home extends AppCompatActivity
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference tokens = db.getReference("Tokens");
         Token data = new Token(token, false);
-        tokens.child(Common.currentUser.getPhone()).setValue(data);
+//        tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
     private void loadMenu() {
@@ -317,7 +314,7 @@ public class Home extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
-        mSlider.stopAutoCycle();
+//        mSlider.stopAutoCycle();
     }
 
     @Override
@@ -355,8 +352,8 @@ public class Home extends AppCompatActivity
         if (id == R.id.nav_menu) {
             // Handle the camera action
         } else if (id == R.id.nav_cart) {
-            Intent cartIntent = new Intent(Home.this, Cart.class);
-            startActivity(cartIntent);
+//            Intent cartIntent = new Intent(Home.this, Cart.class);
+//            startActivity(cartIntent);
 
         } else if (id == R.id.nav_orders) {
             Intent orderIntent = new Intent(Home.this, OrderStatus.class);

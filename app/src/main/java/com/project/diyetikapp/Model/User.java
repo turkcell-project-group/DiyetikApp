@@ -6,7 +6,8 @@ public class User{
     private String Phone;
     private  String IsStaff;
     private String secureCode;
-private String homeAdress;
+    private String homeAdress;
+
     public User() {
     }
 

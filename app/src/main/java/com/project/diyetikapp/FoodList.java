@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -37,7 +36,6 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.project.diyetikapp.Common.Common;
 import com.project.diyetikapp.Database.Database;
 import com.project.diyetikapp.Interface.ItemClickListener;
-import com.project.diyetikapp.Model.Category;
 import com.project.diyetikapp.Model.Food;
 import com.project.diyetikapp.Model.Order;
 import com.project.diyetikapp.ViewHolder.FoodViewHolder;
@@ -221,9 +219,9 @@ public class FoodList extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        LayoutAnimationController controller= AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),
-                R.anim.layout_from_left);
-        recyclerView.setLayoutAnimation(controller);
+//        LayoutAnimationController controller= AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),
+//                R.anim.layout_from_left);
+//        recyclerView.setLayoutAnimation(controller);
 
 
 
