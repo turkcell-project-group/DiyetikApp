@@ -81,7 +81,7 @@ public class Database extends SQLiteAssetHelper {
         db.execSQL(query);
 
     }
-    public boolean isFavorite(String foodId,String userPhone){
+    /*public boolean isFavorite(String foodId,String userPhone){
         SQLiteDatabase db = getReadableDatabase();
         String query = String.format("SELECT * FROM Favorites WHERE FoodId='%s'and UserPhone='%s;",foodId,userPhone);
         Cursor cursor = db.rawQuery(query,null);
@@ -92,7 +92,7 @@ public class Database extends SQLiteAssetHelper {
         cursor.close();
         return true;
 
-    }
+    }*/
 
 
     public int getCountCart() {

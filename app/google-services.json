@@ -8,18 +8,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:283041708397:android:36c789d55a3a7389",
+        "mobilesdk_app_id": "1:283041708397:android:db05c1741651b2d0",
         "android_client_info": {
-          "package_name": "com.example.diyetsepeti"
+          "package_name": "com.project.diyetikapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "283041708397-ok5dvn49r03d8v9ajmpr6mdo4d3dm3n8.apps.googleusercontent.com",
+          "client_id": "283041708397-5cj5nrhg3hvvabmu4311dstrinmuv9r9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.diyetsepeti",
-            "certificate_hash": "57505c8c4520ff196395641cbfb9e8302b3d120e"
+            "package_name": "com.project.diyetikapp",
+            "certificate_hash": "8b8da7c78685d755a6f46ebf3ebe4f7433df8f0a"
+          }
+        },
+        {
+          "client_id": "283041708397-qqjr68bguomkl6ut018bb67fv408b342.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.diyetikapp",
+            "certificate_hash": "929544c0532c8aa5845506898a82e1312afc6a86"
           }
         },
         {
@@ -29,7 +37,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyADXEXI4ab2xptw0QerfJ7Bpzs1g9A9wek"
+          "current_key": "AIzaSyDRDwr8ZxvR9nDwFb_QUebk4XQ4mfHK4YM"
         }
       ],
       "services": {
@@ -45,26 +53,18 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:283041708397:android:db05c1741651b2d0",
+        "mobilesdk_app_id": "1:283041708397:android:b076d71b5449c28d7c0264",
         "android_client_info": {
-          "package_name": "com.project.diyetikapp"
+          "package_name": "com.project.diyetikserver"
         }
       },
       "oauth_client": [
         {
-          "client_id": "283041708397-khgf282v9cagfqjc75h9ehfjirgqqcq8.apps.googleusercontent.com",
+          "client_id": "283041708397-hk87l475grgiojso4bt0lao3mpktqsgo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.project.diyetikapp",
-            "certificate_hash": "57505c8c4520ff196395641cbfb9e8302b3d120e"
-          }
-        },
-        {
-          "client_id": "283041708397-3t7lit40hstoi47r09gq2qp1asic2n06.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.project.diyetikapp",
-            "certificate_hash": "8b8da7c78685d755a6f46ebf3ebe4f7433df8f0a"
+            "package_name": "com.project.diyetikserver",
+            "certificate_hash": "929544c0532c8aa5845506898a82e1312afc6a86"
           }
         },
         {
@@ -74,7 +74,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyADXEXI4ab2xptw0QerfJ7Bpzs1g9A9wek"
+          "current_key": "AIzaSyDRDwr8ZxvR9nDwFb_QUebk4XQ4mfHK4YM"
         }
       ],
       "services": {

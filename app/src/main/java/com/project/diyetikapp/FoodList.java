@@ -120,12 +120,12 @@ public class FoodList extends AppCompatActivity {
 
         // Firebase
         database = FirebaseDatabase.getInstance();
-        foodList = database.getReference("Foods");
+        foodList = database.getReference("Food");
 
         //Local DB
         localDB = new Database(this);
 
-        swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout);
+        swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_layout_list);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
@@ -219,6 +219,8 @@ public class FoodList extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+       // loadListFood(categoryId);
 //        LayoutAnimationController controller= AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),
 //                R.anim.layout_from_left);
 //        recyclerView.setLayoutAnimation(controller);
@@ -229,6 +231,8 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void startSearch(CharSequence text)  {
+
+        Log.d("adaprterkontrol", "onBindViewHolder: " + text);
         //create query by name
         Query searchByName = foodList.orderByChild("name").equalTo(text.toString());
         //create options with query
@@ -237,8 +241,10 @@ public class FoodList extends AppCompatActivity {
                 .build();
 
         searchAdapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(foodOptions) {
+
             @Override
             protected void onBindViewHolder(@NonNull FoodViewHolder viewHolder, int position, @NonNull Food model) {
+                Log.d("searchAdapter", "onBindViewHolder: " + position);
                 viewHolder.food_name.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage()).
                         into(viewHolder.food_image);
@@ -289,6 +295,7 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void loadListFood(String categoryId) {
+        Log.d("category", "onBindViewHolder: " + categoryId);
 
         //create query by category Id
         Query searchByName = foodList.orderByChild("menuId").equalTo(categoryId);
@@ -301,16 +308,15 @@ public class FoodList extends AppCompatActivity {
         adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(foodOptions) {
             @Override
             protected void onBindViewHolder(final FoodViewHolder viewHolder, final int position, @NonNull final Food model) {
-
+                Log.d("adapterkontrol", "onBindViewHolder: " + position);
                 viewHolder.food_name.setText(model.getName());
                 viewHolder.food_price.setText(String.format("$ %s",model.getPrice().toString()));
                 Picasso.with(getBaseContext()).load(model.getImage()).
                         into(viewHolder.food_image);
 
                 //add favorites
-                if (localDB.isFavorite(adapter.getRef(position).getKey(),Common.currentUser.getPhone()))
-                    viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
-
+               /* if (localDB.isFavorite(adapter.getRef(position).getKey(),Common.currentUser.getPhone()))
+                    viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);/*/
                 //Quick cart
                 viewHolder.quick_cart.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -336,7 +342,7 @@ public class FoodList extends AppCompatActivity {
                 });
 
                 //Click to change state of favorites
-                viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
+               /* viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!localDB.isFavorite(adapter.getRef(position).getKey(),Common.currentUser.getPhone())){
@@ -352,7 +358,7 @@ public class FoodList extends AppCompatActivity {
                             Toast.makeText(FoodList.this, ""+model.getName()+"was removed from Favorites", Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
+                });*/
                 final Food local = model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
